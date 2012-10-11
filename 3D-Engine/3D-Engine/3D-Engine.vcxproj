@@ -80,6 +80,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\SDL\SDL_draw-1.2.13\src\SDL_draw.c" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
@@ -88,6 +89,7 @@
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="main.h" />

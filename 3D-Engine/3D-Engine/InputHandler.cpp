@@ -6,7 +6,11 @@ InputHandler::InputHandler(void)
 	leftDown = false;
 	upDown = false;
 	downDown = false;
+	wDown = false;
+	sDown = false;
 	spaceDown = false;
+	shiftDown = false;
+	controlDown = false;
 }
 
 void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
@@ -16,7 +20,11 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_LEFT : leftDown = true; break;
 			case SDLK_UP : upDown = true; break;
 			case SDLK_DOWN : downDown = true; break;
+			case SDLK_w : wDown = true; break;
+			case SDLK_s : sDown = true; break;
 			case SDLK_SPACE : spaceDown = true; break;
+			case SDLK_LSHIFT : controlDown = true; break;
+			case SDLK_LCTRL : controlDown = true; break;
 		}
 	} else if (sdlEvent->type == SDL_KEYUP){
 		switch(sdlEvent->key.keysym.sym){
@@ -24,7 +32,10 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_LEFT : leftDown = false; break;
 			case SDLK_UP : upDown = false; break;
 			case SDLK_DOWN : downDown = false; break;
-			case SDLK_SPACE : spaceDown = false; break;
+			case SDLK_w : wDown = false; break;
+			case SDLK_s : sDown = false; break;
+			case SDLK_LSHIFT : controlDown = false; break;
+			case SDLK_LCTRL : controlDown = false; break;
 		}
 	}
 }
@@ -43,6 +54,26 @@ bool InputHandler::up(){
 
 bool InputHandler::down(){
 	return downDown;
+}
+
+bool InputHandler::w(){
+	return wDown;
+}
+
+bool InputHandler::s(){
+	return sDown;
+}
+
+bool InputHandler::space(){
+	return spaceDown;
+}
+
+bool InputHandler::shift(){
+	return shiftDown;
+}
+
+bool InputHandler::control(){
+	return controlDown;
 }
 
 InputHandler::~InputHandler(void)

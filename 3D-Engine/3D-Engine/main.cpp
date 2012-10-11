@@ -4,14 +4,15 @@
 #include "SDL_draw.h"
 #include "TransformHandler.h"
 #include "InputHandler.h"
+#include "Camera.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 using namespace std;
 
-const extern int SCREEN_WIDTH = 1000;
-const extern int SCREEN_HEIGHT = 600;
+const extern int SCREEN_WIDTH = 1400;
+const extern int SCREEN_HEIGHT = 900;
 const extern int SCREEN_BPP = 32;
 const extern int FPS = 60;
 
@@ -23,6 +24,7 @@ SDL_Surface * screen;
 TransformHandler * transformHandler;
 InputHandler * inputHandler;
 vector<DrawableObject*> * objects;
+Camera *camera;
 
 void init(){
 	//Initialize all SDL subsystems
@@ -36,20 +38,24 @@ void init(){
 	//Set the window caption
     SDL_WM_SetCaption( "3D-Engine", NULL );
 
-	// Init colors
-	white = SDL_MapRGB(screen->format, 255,255,255);
-	green = SDL_MapRGB(screen->format, 0,255,0);
-
 	//Setup handlers
 	transformHandler = new TransformHandler();
 	inputHandler = new InputHandler();
 
+	// Setup colors
+	white = SDL_MapRGB(screen->format, 255,255,255);
+	green = SDL_MapRGB(screen->format, 0,255,0);
+
+	// Create camera
+	camera = new Camera(new Point(700.0f, 700.0f, 700.0f), new Point(0.0f, 0.0f, 0.0f), transformHandler);
+
 	// Add objects - TODO: read from file
 	objects = new vector<DrawableObject*>();
-	DrawableObject *obj = new DrawableObject();
-	Point *a = new Point(300.0f, 300.0f, 0.0f);
-	Point *b = new Point(320.0f, 280.0f, 0.0f);
-	Point *c = new Point(340.0f, 320.0f, 0.0f);
+	Point *pos = new Point(300.0f, -300.0f, 60.0f);
+	DrawableObject *obj = new DrawableObject(pos);
+	Point *a = new Point(70.0f, 70.0f, 20.0f);
+	Point *b = new Point(10.0f, 80.0f, 16.0f);
+	Point *c = new Point(22.0f, 80.0f, 56.0f);
 	Triangle *tri = new Triangle(a,b,c);
 	obj->addTriangle(tri);
 	objects->push_back(obj);
@@ -59,23 +65,105 @@ void init(){
 
 void update(int ticks){
 	if (inputHandler->right()){
-		for (int i = 0; i < objects->at(0)->getTriangles()->size(); i++){
-			Point *ppa = objects->at(0)->getTriangles()->at(i)->getA();
-			Point *paa = transformHandler->rotateX(ppa, 1.0f);
-			objects->at(0)->getTriangles()->at(i)->setA(paa);
-			
-			Point *ppb = objects->at(0)->getTriangles()->at(i)->getB();
-			Point *pab = transformHandler->rotateX(ppb, 1.0f);
-			objects->at(0)->getTriangles()->at(i)->setB(pab);
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, 1.0f, 0.0f, 0.0f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateX(transformHandler, 0.1f);
+			}
+		}
+	}
 
-			Point *ppc = objects->at(0)->getTriangles()->at(i)->getC();
-			Point *pac = transformHandler->rotateX(ppc, 1.0f);
-			objects->at(0)->getTriangles()->at(i)->setC(pac);
+	if (inputHandler->left()){
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, -1.0f, 0.0f, 0.0f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateX(transformHandler, -0.1f);
+			}
+		}
+	}
+
+	if (inputHandler->up()){
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, 0.0f, 1.0f, 0.0f);
+			}
+		} else if (inputHandler->shift()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->scaleUniform(transformHandler, 1.1f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateY(transformHandler, 0.1f);
+			}
+		}
+	}
+
+	if (inputHandler->down()){
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, 0.0f, -1.0f, 0.0f);
+			}
+		} else if (inputHandler->shift()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->scaleUniform(transformHandler, 0.9f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateY(transformHandler, -0.1f);
+			}
+		}
+	}
+
+	if (inputHandler->w()){
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, 0.0f, 0.0f, 1.0f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateZ(transformHandler, 0.1f);
+			}
+		}
+	}
+
+	if (inputHandler->s()){
+		if (inputHandler->control()){
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->translate(transformHandler, 0.0f, 0.0f, -1.0f);
+			}
+		} else {
+			for (int i = 0; i < objects->size(); i++){
+				objects->at(0)->rotateZ(transformHandler, -0.1f);
+			}
+		}
+	}
+}
+
+void drawLine(int x1, int y1, int x2, int y2, int color){
+	/*
+	x1 += SCREEN_WIDTH/2;
+	x2 += SCREEN_WIDTH/2;
+	y1 += SCREEN_HEIGHT/2;
+	y2 += SCREEN_HEIGHT/2;
+	*/
+
+	// Only draw inside screen
+	if (x1 >= 0 && x2 >= 0 && y1 >= 0 && y2 >= 0){
+		if (x2 < SCREEN_WIDTH && x2 < SCREEN_WIDTH && y1 < SCREEN_HEIGHT && y2 < SCREEN_HEIGHT){
+			Draw_Line(screen, x1, y1, x2, y2, color);
 		}
 	}
 }
 
 void drawObject(DrawableObject *object){
+
+	// Draw all triangles
 	for (int i = 0; i < object->getTriangles()->size(); i++){
 		int x1 = int(object->getTriangles()->at(i)->getA()->getX());
 		int y1 = int(object->getTriangles()->at(i)->getA()->getY());
@@ -83,12 +171,12 @@ void drawObject(DrawableObject *object){
 		int x2 = int(object->getTriangles()->at(i)->getB()->getX());
 		int y2 = int(object->getTriangles()->at(i)->getB()->getY());
 		int z2 = int(object->getTriangles()->at(i)->getB()->getZ());
-		Draw_Line(screen, x1, y1, x2, y2, green); 
+		drawLine(x1, y1, x2, y2, green); 
 		int x3 = int(object->getTriangles()->at(i)->getC()->getX());
 		int y3 = int(object->getTriangles()->at(i)->getC()->getY());
 		int z3 = int(object->getTriangles()->at(i)->getC()->getZ());
-		Draw_Line(screen, x2, y2, x3, y3, green); 
-		Draw_Line(screen, x3, y3, x1, y1, green); 
+		drawLine(x2, y2, x3, y3, green); 
+		drawLine(x3, y3, x1, y1, green); 
 	}
 }
 
@@ -97,10 +185,13 @@ void draw(){
     if( SDL_Flip( screen ) == -1 ){
     }
 
+	vector<DrawableObject*> *objectsToDraw = camera->getTransformedObjects(screen, objects);
+	
 	// Draw objects
 	for(int i = 0; i < objects->size(); i++){
 		drawObject(objects->at(i));
 	}
+
 }
 
 int main( int argc, char* args[] ){

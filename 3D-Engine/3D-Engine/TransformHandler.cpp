@@ -32,7 +32,7 @@ Point *TransformHandler::multiplyMatrices(float a[4][4], float b[4][1]){
 }
 
 Point *TransformHandler::rotateX(Point *_p, float _degrees){
-	Point newPoint();
+
 	float cosD = cosf(_degrees);
 	float sinD = sinf(_degrees);
 
@@ -56,19 +56,93 @@ Point *TransformHandler::rotateX(Point *_p, float _degrees){
 }
 
 Point *TransformHandler::rotateY(Point *_p, float _degrees){
-	return _p;
+
+	float cosD = cosf(_degrees);
+	float sinD = sinf(_degrees);
+
+	float matrixA[4][4] =
+		{
+		{ cosD,	0.0f, sinD, 0.0f },
+		{ 0.0f,	1.0f, 0.0f, 0.0f },
+		{ -sinD,0.0f, cosD, 0.0f },
+		{ 0.0f,	0.0f, 0.0f, 1.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
 }
 
 Point *TransformHandler::rotateZ(Point *_p, float _degrees){
-	return _p;
+
+	float cosD = cosf(_degrees);
+	float sinD = sinf(_degrees);
+
+	float matrixA[4][4] =
+		{
+		{ cosD,	-sinD, 0.0f, 0.0f },
+		{ sinD,	cosD, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 1.0f, 0.0f },
+		{ 0.0f,	0.0f, 0.0f, 1.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
 }
 
 Point *TransformHandler::translate(Point *_p, float _offsetX, float _offsetY, float _offsetZ){
-	return _p;
+
+	float matrixA[4][4] =
+		{
+		{ 1.0f,	0.0f, 0.0f, _offsetX },
+		{ 0.0f,	1.0f, 0.0f, _offsetY },
+		{ 0.0f, 0.0f, 1.0f, _offsetZ },
+		{ 0.0f,	0.0f, 0.0f, 1.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
 }
 
 Point *TransformHandler::scaleUniform(Point *_p, float _factor){
-	return _p;
+
+	float matrixA[4][4] =
+		{
+		{ _factor, 0.0f, 0.0f, 0.0f },
+		{ 0.0f,	_factor, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, _factor, 0.0f },
+		{ 0.0f,	0.0f, 0.0f, 1.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
 }
 
 TransformHandler::~TransformHandler(void)
