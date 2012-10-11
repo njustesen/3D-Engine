@@ -47,15 +47,15 @@ void init(){
 	green = SDL_MapRGB(screen->format, 0,255,0);
 
 	// Create camera
-	camera = new Camera(new Point(700.0f, 700.0f, 700.0f), new Point(0.0f, 0.0f, 0.0f), transformHandler);
+	camera = new Camera(new Point3D(700.0f, 700.0f, 700.0f), new Point3D(0.0f, 0.0f, 0.0f), transformHandler);
 
 	// Add objects - TODO: read from file
 	objects = new vector<DrawableObject*>();
-	Point *pos = new Point(300.0f, -300.0f, 60.0f);
+	Point3D *pos = new Point3D(100.0f, 100.0f, 60.0f);
 	DrawableObject *obj = new DrawableObject(pos);
-	Point *a = new Point(70.0f, 70.0f, 20.0f);
-	Point *b = new Point(10.0f, 80.0f, 16.0f);
-	Point *c = new Point(22.0f, 80.0f, 56.0f);
+	Point3D *a = new Point3D(-70.0f, 70.0f, 20.0f);
+	Point3D *b = new Point3D(0.0f, 0.0f, 6.0f);
+	Point3D *c = new Point3D(22.0f, 80.0f, 56.0f);
 	Triangle *tri = new Triangle(a,b,c);
 	obj->addTriangle(tri);
 	objects->push_back(obj);
@@ -146,12 +146,12 @@ void update(int ticks){
 }
 
 void drawLine(int x1, int y1, int x2, int y2, int color){
-	/*
+	
 	x1 += SCREEN_WIDTH/2;
 	x2 += SCREEN_WIDTH/2;
 	y1 += SCREEN_HEIGHT/2;
 	y2 += SCREEN_HEIGHT/2;
-	*/
+	
 
 	// Only draw inside screen
 	if (x1 >= 0 && x2 >= 0 && y1 >= 0 && y2 >= 0){

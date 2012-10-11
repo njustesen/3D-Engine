@@ -10,12 +10,12 @@ using namespace std;
 class DrawableObject
 {
 private:
-	Point *position;
+	Point3D *position;
 	vector<Triangle*> *triangles;
 public:
 	DrawableObject *clone();
-	DrawableObject(Point *_position);
-	DrawableObject(Point *_position, vector<Triangle*> *_triangles);
+	DrawableObject(Point3D *_position);
+	DrawableObject(Point3D *_position, vector<Triangle*> *_triangles);
 	void rotateX(TransformHandler *_handler, float _degrees);
 	void rotateY(TransformHandler *_handler, float _degrees);
 	void rotateZ(TransformHandler *_handler, float _degrees);
@@ -23,8 +23,8 @@ public:
 	void scaleUniform(TransformHandler *_handler, float _factor);
 	void addTriangle(Triangle *_triangle);
 	vector<Triangle*> *getTriangles();
-	Point *getPosition();
-	void setPosition(Point *_position);
+	Point3D *getPosition();
+	void setPosition(Point3D *_position);
 	~DrawableObject(void);
 };
 

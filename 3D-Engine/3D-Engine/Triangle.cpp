@@ -1,7 +1,7 @@
 #include "Triangle.h"
-#include "Point.h"
+#include "Point3D.h"
 
-Triangle::Triangle(Point *_a, Point *_b, Point *_c){
+Triangle::Triangle(Point3D *_a, Point3D *_b, Point3D *_c){
 	a = _a;
 	b = _b;
 	c = _c;
@@ -11,27 +11,27 @@ Triangle::Triangle(){
 
 }
 
-Point *Triangle::getA(){
+Point3D *Triangle::getA(){
 	return a;
 }
 
-Point *Triangle::getB(){
+Point3D *Triangle::getB(){
 	return b;
 }
 
-Point *Triangle::getC(){
+Point3D *Triangle::getC(){
 	return c;
 }
 
-void Triangle::setA(Point *_p){
+void Triangle::setA(Point3D *_p){
 	a = _p;
 }
 
-void Triangle::setB(Point *_p){
+void Triangle::setB(Point3D *_p){
 	b = _p;
 }
 
-void Triangle::setC(Point *_p){
+void Triangle::setC(Point3D *_p){
 	c = _p;
 }
 

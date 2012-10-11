@@ -1,48 +1,48 @@
 #include "Camera.h"
-#include "Point.h"
+#include "Point3D.h"
 #include "SDL.h"
 #include "main.h"
 #include <vector>
 #include "DrawableObject.h"
 
-Camera::Camera(Point *_position, Point *_lookingAt, TransformHandler *_handler){
+Camera::Camera(Point3D *_position, Point3D *_lookingAt, TransformHandler *_handler){
 	position = _position;
 	lookingAt = _lookingAt;
 	handler = _handler;
 }
 
-Point *Camera::getPosition(){
+Point3D *Camera::getPosition(){
 	return position;
 }
 
-Point *Camera::getLookingAt(){
+Point3D *Camera::getLookingAt(){
 	return lookingAt;
 }
 
-void Camera::setLookingAt(Point *_point){
-	lookingAt = _point;
+void Camera::setLookingAt(Point3D *_Point3D){
+	lookingAt = _Point3D;
 }
 
-void Camera::setPosition(Point *_point){
-	position = _point;
+void Camera::setPosition(Point3D *_Point3D){
+	position = _Point3D;
 }
 
-Point *Camera::getUpVector(){
+Point3D *Camera::getUpVector(){
 
-	Point v(0.0f, 1.0f, 0.0f);
+	Point3D v(0.0f, 1.0f, 0.0f);
 
-	Point right(lookingAt->getY() * v.getZ() - lookingAt->getZ() * v.getY(),
+	Point3D right(lookingAt->getY() * v.getZ() - lookingAt->getZ() * v.getY(),
 				lookingAt->getZ() * v.getX() - lookingAt->getX() * v.getZ(),
 				lookingAt->getX() * v.getY() - lookingAt->getY() * v.getX());
 
-	return new Point(	right.getY() * lookingAt->getZ() - right.getZ() * lookingAt->getY(),
+	return new Point3D(	right.getY() * lookingAt->getZ() - right.getZ() * lookingAt->getY(),
 						right.getZ() * lookingAt->getX() - right.getX() * lookingAt->getZ(),
 						right.getX() * lookingAt->getY() - right.getY() * lookingAt->getX());
 
 }
 
-Point *Camera::getIntermediateOrthogonalAxis(Point *_up, Point *_n){
-	Point cross(_up->getY() * _n->getZ() - _up->getZ() * _n->getY(),
+Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
+	Point3D cross(_up->getY() * _n->getZ() - _up->getZ() * _n->getY(),
 				_up->getZ() * _n->getX() - _up->getX() * _n->getZ(),
 				_up->getX() * _n->getY() - _up->getY() * _n->getX());
 
@@ -50,17 +50,17 @@ Point *Camera::getIntermediateOrthogonalAxis(Point *_up, Point *_n){
 						(cross.getY() * cross.getY()) +
 						(cross.getZ() * cross.getZ()));
 
-	return new Point(cross.getX() / length, cross.getY() / length, cross.getZ() / length);
+	return new Point3D(cross.getX() / length, cross.getY() / length, cross.getZ() / length);
 
 }
 
-Point *Camera::getNewYAxis(Point *_n, Point *_u){
-	return new Point(	_n->getY() * _u->getZ() - _n->getZ() * _u->getY(),
+Point3D *Camera::getNewYAxis(Point3D *_n, Point3D *_u){
+	return new Point3D(	_n->getY() * _u->getZ() - _n->getZ() * _u->getY(),
 						_n->getZ() * _u->getX() - _n->getX() * _u->getZ(),
 						_n->getX() * _u->getY() - _n->getY() * _u->getX());
 }
 
-void Camera::transformToViewSpace(DrawableObject *_object, Point *_u, Point *_v, Point *_n){
+void Camera::transformToViewSpace(DrawableObject *_object, Point3D *_u, Point3D *_v, Point3D *_n){
 	float matrixA[4][4] =
 		{
 		{ _u->getX(), _u->getY(), _u->getZ(), 0.0f },
@@ -89,15 +89,15 @@ vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, ve
 	objects = new vector<DrawableObject*>();
 
 	// View plane normal
-	Point *n = getViewPlaneNormal();
+	Point3D *n = getViewPlaneNormal();
 
 	// Intermediate orthogonal axis
-	Point *up = getUpVector();
-	Point *u = getIntermediateOrthogonalAxis(up, n);
+	Point3D *up = new Point3D(0.0f, 0.1f, 0.0f);
+	Point3D *u = getIntermediateOrthogonalAxis(up, n);
 	delete up;
 
 	// New y axis
-	Point *v = getNewYAxis(n, u);
+	Point3D *v = getNewYAxis(n, u);
 
 	// Clone objects and tranform to view space
 	for (int i = 0; i < _objects->size(); i++){
@@ -120,14 +120,14 @@ vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, ve
 	delete n;
 	delete up;
 	delete u;
-	delete v;
+	//delete v;
 
 	// Return obejcts
 	return objects;
 }
 
-Point *Camera::getViewPlaneNormal(){
-	Point direction(lookingAt->getX() - position->getX(), 
+Point3D *Camera::getViewPlaneNormal(){
+	Point3D direction(lookingAt->getX() - position->getX(), 
 					lookingAt->getY() - position->getY(), 
 					lookingAt->getZ() - position->getZ());
 
@@ -135,7 +135,7 @@ Point *Camera::getViewPlaneNormal(){
 						(direction.getY() * direction.getY()) +
 						(direction.getZ() * direction.getZ()));
 
-	return new Point(direction.getX() / length, direction.getY() / length, direction.getZ() / length);
+	return new Point3D(direction.getX() / length, direction.getY() / length, direction.getZ() / length);
 }
 
 Camera::~Camera(void)

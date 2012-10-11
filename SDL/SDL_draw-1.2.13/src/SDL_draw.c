@@ -488,7 +488,7 @@ void (*Draw_FillRound)(SDL_Surface *super,
 /*=================== END of Draw_FillRound ====================*/
 
 
-/*Assignment of function pointers:*/
+/*Assignment of function Point3Ders:*/
 #define SDL_DRAW_FUNCTIONS_BPP(x) \
       Draw_Pixel       = Draw_Pixel_##x;       \
       Draw_Line        = Draw_Line_##x;        \

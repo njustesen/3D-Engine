@@ -1,22 +1,22 @@
 #include <vector>
-#include "Point.h"
+#include "Point3D.h"
 
 #pragma once
 class Triangle
 {
 private:
-	Point *a;
-	Point *b;
-	Point *c;
+	Point3D *a;
+	Point3D *b;
+	Point3D *c;
 public:
-	Triangle(Point *_a, Point *_b, Point *_c);
+	Triangle(Point3D *_a, Point3D *_b, Point3D *_c);
 	Triangle();
-	Point *getA();
-	Point *getB();
-	Point *getC();
-	void setA(Point *_p);
-	void setB(Point *_p);
-	void setC(Point *_p);
+	Point3D *getA();
+	Point3D *getB();
+	Point3D *getC();
+	void setA(Point3D *_p);
+	void setB(Point3D *_p);
+	void setC(Point3D *_p);
 	~Triangle(void);
 };
 

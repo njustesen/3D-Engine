@@ -1,4 +1,4 @@
-#include "Point.h"
+#include "Point3D.h"
 #include "SDL.h"
 #include <vector>
 #include "DrawableObject.h"
@@ -7,22 +7,22 @@
 class Camera
 {
 private:
-	Point *position;
-	Point *lookingAt;
+	Point3D *position;
+	Point3D *lookingAt;
 	TransformHandler *handler;
 	vector<DrawableObject*> *objects;
-	Point *getViewPlaneNormal();
-	Point *getUpVector();
-	Point *getIntermediateOrthogonalAxis(Point *_up, Point *_n);
-	Point *getNewYAxis(Point *_n, Point *_u);
-	void transformToViewSpace(DrawableObject *_object, Point *_u, Point *_v, Point *_n);
+	Point3D *getViewPlaneNormal();
+	Point3D *getUpVector();
+	Point3D *getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n);
+	Point3D *getNewYAxis(Point3D *_n, Point3D *_u);
+	void transformToViewSpace(DrawableObject *_object, Point3D *_u, Point3D *_v, Point3D *_n);
 public:
-	Point *getPosition();
-	Point *getLookingAt();
-	void setPosition(Point *_point);
-	void setLookingAt(Point *_point);
+	Point3D *getPosition();
+	Point3D *getLookingAt();
+	void setPosition(Point3D *_Point3D);
+	void setLookingAt(Point3D *_Point3D);
 	vector<DrawableObject*> *getTransformedObjects(SDL_Surface * _screen, vector<DrawableObject*> *_objects);
-	Camera(Point *_position, Point *_lookingAt, TransformHandler *_handler);
+	Camera(Point3D *_position, Point3D *_lookingAt, TransformHandler *_handler);
 	~Camera(void);
 };
 

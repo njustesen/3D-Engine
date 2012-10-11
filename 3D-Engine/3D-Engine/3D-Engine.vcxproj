@@ -84,18 +84,20 @@
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Point3D.cpp" />
     <ClCompile Include="TransformHandler.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="Point.h" />
+    <ClInclude Include="Point3D.h" />
     <ClInclude Include="TransformHandler.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Vector3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

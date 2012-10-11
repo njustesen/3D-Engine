@@ -5,7 +5,7 @@ TransformHandler::TransformHandler(void)
 {
 }
 
-Point *TransformHandler::multiplyMatrices(float a[4][4], float b[4][1]){
+Point3D *TransformHandler::multiplyMatrices(float a[4][4], float b[4][1]){
 	// Resulting matrix
 	float c[4][1] = 
 		{
@@ -28,10 +28,10 @@ Point *TransformHandler::multiplyMatrices(float a[4][4], float b[4][1]){
 
 	}
 
-	return new Point(c[0][0], c[1][0], c[2][0]);
+	return new Point3D(c[0][0], c[1][0], c[2][0]);
 }
 
-Point *TransformHandler::rotateX(Point *_p, float _degrees){
+Point3D *TransformHandler::rotateX(Point3D *_p, float _degrees){
 
 	float cosD = cosf(_degrees);
 	float sinD = sinf(_degrees);
@@ -55,7 +55,7 @@ Point *TransformHandler::rotateX(Point *_p, float _degrees){
 	return multiplyMatrices(matrixA, matrixB);
 }
 
-Point *TransformHandler::rotateY(Point *_p, float _degrees){
+Point3D *TransformHandler::rotateY(Point3D *_p, float _degrees){
 
 	float cosD = cosf(_degrees);
 	float sinD = sinf(_degrees);
@@ -79,7 +79,7 @@ Point *TransformHandler::rotateY(Point *_p, float _degrees){
 	return multiplyMatrices(matrixA, matrixB);
 }
 
-Point *TransformHandler::rotateZ(Point *_p, float _degrees){
+Point3D *TransformHandler::rotateZ(Point3D *_p, float _degrees){
 
 	float cosD = cosf(_degrees);
 	float sinD = sinf(_degrees);
@@ -103,7 +103,7 @@ Point *TransformHandler::rotateZ(Point *_p, float _degrees){
 	return multiplyMatrices(matrixA, matrixB);
 }
 
-Point *TransformHandler::translate(Point *_p, float _offsetX, float _offsetY, float _offsetZ){
+Point3D *TransformHandler::translate(Point3D *_p, float _offsetX, float _offsetY, float _offsetZ){
 
 	float matrixA[4][4] =
 		{
@@ -124,7 +124,7 @@ Point *TransformHandler::translate(Point *_p, float _offsetX, float _offsetY, fl
 	return multiplyMatrices(matrixA, matrixB);
 }
 
-Point *TransformHandler::scaleUniform(Point *_p, float _factor){
+Point3D *TransformHandler::scaleUniform(Point3D *_p, float _factor){
 
 	float matrixA[4][4] =
 		{
