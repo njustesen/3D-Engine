@@ -23,7 +23,7 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_w : wDown = true; break;
 			case SDLK_s : sDown = true; break;
 			case SDLK_SPACE : spaceDown = true; break;
-			case SDLK_LSHIFT : controlDown = true; break;
+			case SDLK_LSHIFT : shiftDown = true; break;
 			case SDLK_LCTRL : controlDown = true; break;
 		}
 	} else if (sdlEvent->type == SDL_KEYUP){
@@ -34,7 +34,7 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_DOWN : downDown = false; break;
 			case SDLK_w : wDown = false; break;
 			case SDLK_s : sDown = false; break;
-			case SDLK_LSHIFT : controlDown = false; break;
+			case SDLK_LSHIFT : shiftDown = false; break;
 			case SDLK_LCTRL : controlDown = false; break;
 		}
 	}

@@ -25,6 +25,8 @@ public:
 	vector<Triangle*> *getTriangles();
 	Point3D *getPosition();
 	void setPosition(Point3D *_position);
+	void projectToNDC(TransformHandler *_handler, float _near, float _far, float _height, float _width);
+	void transformToViewSpace(TransformHandler *_handler, Point3D *_u, Point3D *_v, Point3D *_n);
 	~DrawableObject(void);
 };
 

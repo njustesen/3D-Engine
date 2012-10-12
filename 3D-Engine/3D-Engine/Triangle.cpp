@@ -24,17 +24,29 @@ Point3D *Triangle::getC(){
 }
 
 void Triangle::setA(Point3D *_p){
+	if (a)
+		delete a;
 	a = _p;
 }
 
 void Triangle::setB(Point3D *_p){
+	if (b)
+		delete b;
 	b = _p;
 }
 
 void Triangle::setC(Point3D *_p){
+	if (c)
+		delete c;
 	c = _p;
 }
 
 Triangle::~Triangle(void)
 {
+	if (a);
+		delete a;
+	if (b);
+		delete b;
+	if (c);
+		delete c;
 }

@@ -145,6 +145,47 @@ Point3D *TransformHandler::scaleUniform(Point3D *_p, float _factor){
 	return multiplyMatrices(matrixA, matrixB);
 }
 
+Point3D *TransformHandler::projectToNDC(Point3D *_p, float _near, float _far, float _height, float _width){
+	float matrixA[4][4] =
+		{
+		{ (2 * _near) / _width, 0.0f, 0.0f, 0.0f },
+		{ 0.0f,	(2 * _near) / _height, 0.0f, 0.0f },
+		{ 0.0f, 0.0f, (-(_far + _near)) / (_far - _near), (-2*(_far * _near)) / (_far - _near) },
+		{ 0.0f,	0.0f, -1.0f, 0.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
+}
+
+Point3D *TransformHandler::toViewSpace(Point3D *_p, Point3D *_u, Point3D *_v, Point3D *_n){
+
+	float matrixA[4][4] =
+		{
+		{ _u->getX(), _u->getY(), _u->getZ(), 0.0f },
+		{ _v->getX(), _v->getY(), _v->getZ(), 0.0f },
+		{ _n->getX(), _n->getY(), _n->getZ(), 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 1.0f },
+		};
+
+	float matrixB[4][1] =
+		{
+		{ _p->getX() },
+		{ _p->getY() },
+		{ _p->getZ() },
+		{ 1.0f },
+		};
+
+	return multiplyMatrices(matrixA, matrixB);
+}
+
 TransformHandler::~TransformHandler(void)
 {
 }

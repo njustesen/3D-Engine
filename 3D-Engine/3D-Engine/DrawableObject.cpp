@@ -23,71 +23,88 @@ vector<Triangle*> *DrawableObject::getTriangles(){
 
 void DrawableObject::rotateX(TransformHandler *_handler, float _degrees){
 	for (int i = 0; i < triangles->size(); i++){
-		Point3D *ppa = triangles->at(i)->getA();
-		Point3D *paa = _handler->rotateX(ppa, _degrees);
+		Point3D *paa = _handler->rotateX(triangles->at(i)->getA(), _degrees);
 		triangles->at(i)->setA(paa);
 			
-		Point3D *ppb = triangles->at(i)->getB();
-		Point3D *pab = _handler->rotateX(ppb, _degrees);
+		Point3D *pab = _handler->rotateX(triangles->at(i)->getB(), _degrees);
 		triangles->at(i)->setB(pab);
 
-		Point3D *ppc = triangles->at(i)->getC();
-		Point3D *pac = _handler->rotateX(ppc, _degrees);
+		Point3D *pac = _handler->rotateX(triangles->at(i)->getC(), _degrees);
 		triangles->at(i)->setC(pac);
 	}
 }
 
 void DrawableObject::rotateY(TransformHandler *_handler, float _degrees){
 	for (int i = 0; i < triangles->size(); i++){
-		Point3D *ppa = triangles->at(i)->getA();
-		Point3D *paa = _handler->rotateY(ppa, _degrees);
+		Point3D *paa = _handler->rotateY(triangles->at(i)->getA(), _degrees);
 		triangles->at(i)->setA(paa);
 			
-		Point3D *ppb = triangles->at(i)->getB();
-		Point3D *pab = _handler->rotateY(ppb, _degrees);
+		Point3D *pab = _handler->rotateY(triangles->at(i)->getB(), _degrees);
 		triangles->at(i)->setB(pab);
 
-		Point3D *ppc = triangles->at(i)->getC();
-		Point3D *pac = _handler->rotateY(ppc, _degrees);
+		Point3D *pac = _handler->rotateY(triangles->at(i)->getC(), _degrees);
 		triangles->at(i)->setC(pac);
 	}
 }
 
 void DrawableObject::rotateZ(TransformHandler *_handler, float _degrees){
 	for (int i = 0; i < triangles->size(); i++){
-		Point3D *ppa = triangles->at(i)->getA();
-		Point3D *paa = _handler->rotateZ(ppa, _degrees);
+		Point3D *paa = _handler->rotateZ(triangles->at(i)->getA(), _degrees);
 		triangles->at(i)->setA(paa);
-			
-		Point3D *ppb = triangles->at(i)->getB();
-		Point3D *pab = _handler->rotateZ(ppb, _degrees);
+
+		Point3D *pab = _handler->rotateZ(triangles->at(i)->getB(), _degrees);
 		triangles->at(i)->setB(pab);
 
-		Point3D *ppc = triangles->at(i)->getC();
-		Point3D *pac = _handler->rotateZ(ppc, _degrees);
+		Point3D *pac = _handler->rotateZ(triangles->at(i)->getC(), _degrees);
 		triangles->at(i)->setC(pac);
 	}
 }
 
 void DrawableObject::translate(TransformHandler *_handler, float _offsetX, float _offsetY, float _offsetZ){
-	position = _handler->translate(position, _offsetX, _offsetY, _offsetZ);
+	setPosition(_handler->translate(position, _offsetX, _offsetY, _offsetZ));
 	
 }
 
 void DrawableObject::scaleUniform(TransformHandler *_handler, float _factor){
 	for (int i = 0; i < triangles->size(); i++){
-		Point3D *ppa = triangles->at(i)->getA();
-		Point3D *paa = _handler->scaleUniform(ppa, _factor);
+		Point3D *paa = _handler->scaleUniform(triangles->at(i)->getA(), _factor);
 		triangles->at(i)->setA(paa);
 			
-		Point3D *ppb = triangles->at(i)->getB();
-		Point3D *pab = _handler->scaleUniform(ppb, _factor);
+		Point3D *pab = _handler->scaleUniform(triangles->at(i)->getB(), _factor);
 		triangles->at(i)->setB(pab);
 
-		Point3D *ppc = triangles->at(i)->getC();
-		Point3D *pac = _handler->scaleUniform(ppc, _factor);
+		Point3D *pac = _handler->scaleUniform(triangles->at(i)->getC(), _factor);
 		triangles->at(i)->setC(pac);
 	}
+}
+
+void DrawableObject::projectToNDC(TransformHandler *_handler, float _near, float _far, float _height, float _width){
+	for (int i = 0; i < triangles->size(); i++){
+		triangles->at(i)->setA( _handler->projectToNDC(triangles->at(i)->getA(), _near, _far, _height, _width ));
+		triangles->at(i)->setB( _handler->projectToNDC(triangles->at(i)->getB(), _near, _far, _height, _width ));
+		triangles->at(i)->setC( _handler->projectToNDC(triangles->at(i)->getC(), _near, _far, _height, _width ));
+	}
+	setPosition(_handler->projectToNDC(position, _near, _far, _height, _width ));
+}
+
+void DrawableObject::transformToViewSpace(TransformHandler *_handler, Point3D *_u, Point3D *_v, Point3D *_n) {
+
+	float matrixA[4][4] =
+		{
+		{ _u->getX(), _u->getY(), _u->getZ(), 0.0f },
+		{ _v->getX(), _v->getY(), _v->getZ(), 0.0f },
+		{ _n->getX(), _n->getY(), _n->getZ(), 0.0f },
+		{ 0.0f, 0.0f, 0.0f, 1.0f },
+		};
+
+	for (int i = 0; i < triangles->size(); i++){
+		triangles->at(i)->setA(_handler->toViewSpace(triangles->at(i)->getA(), _u, _v, _n));
+		triangles->at(i)->setB(_handler->toViewSpace(triangles->at(i)->getB(), _u, _v, _n));
+		triangles->at(i)->setC(_handler->toViewSpace(triangles->at(i)->getC(), _u, _v, _n));
+	}
+
+	setPosition(_handler->toViewSpace(position, _u, _v, _n));
+
 }
 
 Point3D *DrawableObject::getPosition(){
@@ -95,7 +112,9 @@ Point3D *DrawableObject::getPosition(){
 }
 
 void DrawableObject::setPosition(Point3D *_position){
-	//delete position;
+	if (position)
+		delete position;
+
 	position = _position;
 }
 
@@ -118,4 +137,14 @@ DrawableObject *DrawableObject::clone(){
 
 DrawableObject::~DrawableObject(void)
 {
+	if (position)
+		delete position;
+
+	for(int i = 0; i < triangles->size(); i++){
+		if (triangles->at(i))
+			delete triangles->at(i);
+	}
+
+	if (triangles)
+		delete triangles;
 }

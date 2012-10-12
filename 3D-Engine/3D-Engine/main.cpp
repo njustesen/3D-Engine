@@ -47,20 +47,64 @@ void init(){
 	green = SDL_MapRGB(screen->format, 0,255,0);
 
 	// Create camera
-	camera = new Camera(new Point3D(700.0f, 700.0f, 700.0f), new Point3D(0.0f, 0.0f, 0.0f), transformHandler);
+	camera = new Camera(new Point3D(3000.0f, 0.0f, 0.0f), new Point3D(0.0f, 0.0f, 0.0f), transformHandler);
 
 	// Add objects - TODO: read from file
 	objects = new vector<DrawableObject*>();
-	Point3D *pos = new Point3D(100.0f, 100.0f, 60.0f);
+	Point3D *pos = new Point3D(0.0f, 0.0f, 0.0f);
 	DrawableObject *obj = new DrawableObject(pos);
-	Point3D *a = new Point3D(-70.0f, 70.0f, 20.0f);
-	Point3D *b = new Point3D(0.0f, 0.0f, 6.0f);
-	Point3D *c = new Point3D(22.0f, 80.0f, 56.0f);
-	Triangle *tri = new Triangle(a,b,c);
-	obj->addTriangle(tri);
-	objects->push_back(obj);
 
-	int i = 0;
+	Point3D *a1 = new Point3D(0.0f, 0.0f, 100.0f);
+	Point3D *b1 = new Point3D(0.0f, 100.0f, 0.0f);
+	Point3D *c1 = new Point3D(100.0f, 0.0f, 0.0f);
+	Triangle *tri1 = new Triangle(a1,b1,c1);
+
+	Point3D *a2 = new Point3D(0.0f, 0.0f, 100.0f);
+	Point3D *b2 = new Point3D(0.0f, -100.0f, 0.0f);
+	Point3D *c2 = new Point3D(100.0f, 0.0f, 0.0f);
+	Triangle *tri2 = new Triangle(a2,b2,c2);
+
+	Point3D *a3 = new Point3D(0.0f, 0.0f, 100.0f);
+	Point3D *b3 = new Point3D(0.0f, 100.0f, 0.0f);
+	Point3D *c3 = new Point3D(-100.0f, 0.0f, 0.0f);
+	Triangle *tri3 = new Triangle(a3,b3,c3);
+
+	Point3D *a4 = new Point3D(0.0f, 0.0f, 100.0f);
+	Point3D *b4 = new Point3D(0.0f, -100.0f, 0.0f);
+	Point3D *c4 = new Point3D(-100.0f, 0.0f, 0.0f);
+	Triangle *tri4 = new Triangle(a4,b4,c4);
+
+	obj->addTriangle(tri1);
+	obj->addTriangle(tri2);
+	obj->addTriangle(tri3);
+	obj->addTriangle(tri4);
+
+	Point3D *a5 = new Point3D(0.0f, 0.0f, -100.0f);
+	Point3D *b5 = new Point3D(0.0f, 100.0f, 0.0f);
+	Point3D *c5 = new Point3D(100.0f, 0.0f, 0.0f);
+	Triangle *tri5 = new Triangle(a5,b5,c5);
+
+	Point3D *a6 = new Point3D(0.0f, 0.0f, -100.0f);
+	Point3D *b6 = new Point3D(0.0f, -100.0f, 0.0f);
+	Point3D *c6 = new Point3D(100.0f, 0.0f, 0.0f);
+	Triangle *tri6 = new Triangle(a6,b6,c6);
+
+	Point3D *a7 = new Point3D(0.0f, 0.0f, -100.0f);
+	Point3D *b7 = new Point3D(0.0f, 100.0f, 0.0f);
+	Point3D *c7 = new Point3D(-100.0f, 0.0f, 0.0f);
+	Triangle *tri7 = new Triangle(a7,b7,c7);
+
+	Point3D *a8 = new Point3D(0.0f, 0.0f, -100.0f);
+	Point3D *b8 = new Point3D(0.0f, -100.0f, 0.0f);
+	Point3D *c8 = new Point3D(-100.0f, 0.0f, 0.0f);
+	Triangle *tri8 = new Triangle(a8,b8,c8);
+
+	obj->addTriangle(tri5);
+	obj->addTriangle(tri6);
+	obj->addTriangle(tri7);
+	obj->addTriangle(tri8);
+
+	objects->push_back(obj);
 }
 
 void update(int ticks){
@@ -71,7 +115,7 @@ void update(int ticks){
 			}
 		} else {
 			for (int i = 0; i < objects->size(); i++){
-				objects->at(0)->rotateX(transformHandler, 0.1f);
+				objects->at(0)->rotateY(transformHandler, 0.1f);
 			}
 		}
 	}
@@ -83,7 +127,7 @@ void update(int ticks){
 			}
 		} else {
 			for (int i = 0; i < objects->size(); i++){
-				objects->at(0)->rotateX(transformHandler, -0.1f);
+				objects->at(0)->rotateY(transformHandler, -0.1f);
 			}
 		}
 	}
@@ -99,7 +143,7 @@ void update(int ticks){
 			}
 		} else {
 			for (int i = 0; i < objects->size(); i++){
-				objects->at(0)->rotateY(transformHandler, 0.1f);
+				objects->at(0)->rotateX(transformHandler, 0.1f);
 			}
 		}
 	}
@@ -115,7 +159,7 @@ void update(int ticks){
 			}
 		} else {
 			for (int i = 0; i < objects->size(); i++){
-				objects->at(0)->rotateY(transformHandler, -0.1f);
+				objects->at(0)->rotateX(transformHandler, -0.1f);
 			}
 		}
 	}
@@ -146,12 +190,11 @@ void update(int ticks){
 }
 
 void drawLine(int x1, int y1, int x2, int y2, int color){
-	
+
 	x1 += SCREEN_WIDTH/2;
 	x2 += SCREEN_WIDTH/2;
 	y1 += SCREEN_HEIGHT/2;
 	y2 += SCREEN_HEIGHT/2;
-	
 
 	// Only draw inside screen
 	if (x1 >= 0 && x2 >= 0 && y1 >= 0 && y2 >= 0){
@@ -161,36 +204,44 @@ void drawLine(int x1, int y1, int x2, int y2, int color){
 	}
 }
 
-void drawObject(DrawableObject *object){
+void drawObject(DrawableObject *_object){
 
 	// Draw all triangles
-	for (int i = 0; i < object->getTriangles()->size(); i++){
-		int x1 = int(object->getTriangles()->at(i)->getA()->getX());
-		int y1 = int(object->getTriangles()->at(i)->getA()->getY());
-		int z1 = int(object->getTriangles()->at(i)->getA()->getZ());
-		int x2 = int(object->getTriangles()->at(i)->getB()->getX());
-		int y2 = int(object->getTriangles()->at(i)->getB()->getY());
-		int z2 = int(object->getTriangles()->at(i)->getB()->getZ());
-		drawLine(x1, y1, x2, y2, green); 
-		int x3 = int(object->getTriangles()->at(i)->getC()->getX());
-		int y3 = int(object->getTriangles()->at(i)->getC()->getY());
-		int z3 = int(object->getTriangles()->at(i)->getC()->getZ());
-		drawLine(x2, y2, x3, y3, green); 
-		drawLine(x3, y3, x1, y1, green); 
+	int x = int(_object->getPosition()->getX());
+	int y = int(_object->getPosition()->getY());
+
+	for (int i = 0; i < _object->getTriangles()->size(); i++){
+		int x1 = int(_object->getTriangles()->at(i)->getA()->getX());
+		int y1 = int(_object->getTriangles()->at(i)->getA()->getY());
+		int z1 = int(_object->getTriangles()->at(i)->getA()->getZ());
+		int x2 = int(_object->getTriangles()->at(i)->getB()->getX());
+		int y2 = int(_object->getTriangles()->at(i)->getB()->getY());
+		int z2 = int(_object->getTriangles()->at(i)->getB()->getZ());
+		drawLine(x1 + x, y1 + y, x2 + x, y2 + y, green); 
+		int x3 = int(_object->getTriangles()->at(i)->getC()->getX());
+		int y3 = int(_object->getTriangles()->at(i)->getC()->getY());
+		int z3 = int(_object->getTriangles()->at(i)->getC()->getZ());
+		drawLine(x2 + x, y2 + y, x3 + x, y3 + y, green); 
+		drawLine(x3 + x, y3 + y, x1 + x, y1 + y, green); 
 	}
 }
 
 void draw(){
 	//Update the screen
+	
     if( SDL_Flip( screen ) == -1 ){
-    }
 
+    }
+	SDL_FillRect(screen,NULL, 0x000000); 
 	vector<DrawableObject*> *objectsToDraw = camera->getTransformedObjects(screen, objects);
 	
 	// Draw objects
-	for(int i = 0; i < objects->size(); i++){
-		drawObject(objects->at(i));
+	for(int i = 0; i < objectsToDraw->size(); i++){
+		drawObject(objectsToDraw->at(i));
+		delete objectsToDraw->at(i);
 	}
+
+	delete objectsToDraw;
 
 }
 
@@ -217,7 +268,6 @@ int main( int argc, char* args[] ){
 				case SDL_KEYUP : inputHandler->handleKeyEvent(&sdlEvent); break;
 			}
 		}
-		
 
 		// Update
 		int newTime = SDL_GetTicks();

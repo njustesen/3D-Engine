@@ -10,7 +10,6 @@ private:
 	Point3D *position;
 	Point3D *lookingAt;
 	TransformHandler *handler;
-	vector<DrawableObject*> *objects;
 	Point3D *getViewPlaneNormal();
 	Point3D *getUpVector();
 	Point3D *getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n);

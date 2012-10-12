@@ -20,10 +20,16 @@ Point3D *Camera::getLookingAt(){
 }
 
 void Camera::setLookingAt(Point3D *_Point3D){
+	if (lookingAt)
+		delete lookingAt;
+
 	lookingAt = _Point3D;
 }
 
 void Camera::setPosition(Point3D *_Point3D){
+	if (position)
+		delete position;
+
 	position = _Point3D;
 }
 
@@ -39,6 +45,18 @@ Point3D *Camera::getUpVector(){
 						right.getZ() * lookingAt->getX() - right.getX() * lookingAt->getZ(),
 						right.getX() * lookingAt->getY() - right.getY() * lookingAt->getX());
 
+}
+
+Point3D *Camera::getViewPlaneNormal(){
+	Point3D direction(lookingAt->getX() - position->getX(), 
+					lookingAt->getY() - position->getY(), 
+					lookingAt->getZ() - position->getZ());
+
+	float length = sqrt((direction.getX() * direction.getX()) +
+						(direction.getY() * direction.getY()) +
+						(direction.getZ() * direction.getZ()));
+
+	return new Point3D(direction.getX() / length, direction.getY() / length, direction.getZ() / length);
 }
 
 Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
@@ -82,11 +100,9 @@ void Camera::transformToViewSpace(DrawableObject *_object, Point3D *_u, Point3D 
 }
 
 vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, vector<DrawableObject*> *_objects){
-
-	// Clear screen
-
+	
 	// Convert from object space to world space
-	objects = new vector<DrawableObject*>();
+	vector<DrawableObject*> *objects = new vector<DrawableObject*>();
 
 	// View plane normal
 	Point3D *n = getViewPlaneNormal();
@@ -94,7 +110,6 @@ vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, ve
 	// Intermediate orthogonal axis
 	Point3D *up = new Point3D(0.0f, 0.1f, 0.0f);
 	Point3D *u = getIntermediateOrthogonalAxis(up, n);
-	delete up;
 
 	// New y axis
 	Point3D *v = getNewYAxis(n, u);
@@ -107,35 +122,36 @@ vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, ve
 		clonedObj->translate(handler, -position->getX(), -position->getY(), -position->getZ());
 
 		// Transform objects into view space
-		transformToViewSpace(clonedObj, u, v, n);
+		clonedObj->transformToViewSpace(handler, u, v, n);
+		//transformToViewSpace(clonedObj, u, v, n);
+
+		// Do Projection
+		float near = 1000.0f;
+		float far = 2000.0f;
+		float height = SCREEN_HEIGHT;
+		float width = SCREEN_WIDTH;
+
+		clonedObj->projectToNDC(handler, near, far, height, width);
 
 		objects->push_back(clonedObj);
 
 	}
 
-	// Do Projection
-
-	
 	// Clean up
-	delete n;
-	delete up;
-	delete u;
-	//delete v;
+	if (n)
+		delete n;
+
+	if (up)
+		delete up;
+
+	if (u)
+		delete u;
+
+	if (v)
+		delete v;
 
 	// Return obejcts
 	return objects;
-}
-
-Point3D *Camera::getViewPlaneNormal(){
-	Point3D direction(lookingAt->getX() - position->getX(), 
-					lookingAt->getY() - position->getY(), 
-					lookingAt->getZ() - position->getZ());
-
-	float length = sqrt((direction.getX() * direction.getX()) +
-						(direction.getY() * direction.getY()) +
-						(direction.getZ() * direction.getZ()));
-
-	return new Point3D(direction.getX() / length, direction.getY() / length, direction.getZ() / length);
 }
 
 Camera::~Camera(void)
