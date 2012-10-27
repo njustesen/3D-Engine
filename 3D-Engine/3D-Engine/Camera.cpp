@@ -60,9 +60,12 @@ Point3D *Camera::getViewPlaneNormal(){
 }
 
 Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
-	Point3D cross(_up->getY() * _n->getZ() - _up->getZ() * _n->getY(),
-				_up->getZ() * _n->getX() - _up->getX() * _n->getZ(),
-				_up->getX() * _n->getY() - _up->getY() * _n->getX());
+
+	Point3D *up = getUpVector();
+
+	Point3D cross(up->getY() * _n->getZ() - up->getZ() * _n->getY(),
+				up->getZ() * _n->getX() - up->getX() * _n->getZ(),
+				up->getX() * _n->getY() - up->getY() * _n->getX());
 
 	float length = sqrt((cross.getX() * cross.getX()) +
 						(cross.getY() * cross.getY()) +
@@ -72,86 +75,13 @@ Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
 
 }
 
-Point3D *Camera::getNewYAxis(Point3D *_n, Point3D *_u){
-	return new Point3D(	_n->getY() * _u->getZ() - _n->getZ() * _u->getY(),
-						_n->getZ() * _u->getX() - _n->getX() * _u->getZ(),
-						_n->getX() * _u->getY() - _n->getY() * _u->getX());
-}
-
-void Camera::transformToViewSpace(DrawableObject *_object, Point3D *_u, Point3D *_v, Point3D *_n){
-	float matrixA[4][4] =
-		{
-		{ _u->getX(), _u->getY(), _u->getZ(), 0.0f },
-		{ _v->getX(), _v->getY(), _v->getZ(), 0.0f },
-		{ _n->getX(), _n->getY(), _n->getZ(), 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 1.0f },
-		};
-
-	float matrixB[4][1] =
-		{
-		{ _object->getPosition()->getX() },
-		{ _object->getPosition()->getY() },
-		{ _object->getPosition()->getZ() },
-		{ 1.0f },
-		};
-
-	_object->setPosition(handler->multiplyMatrices(matrixA, matrixB));
-
-}
-
-vector<DrawableObject*> *Camera::getTransformedObjects(SDL_Surface * _screen, vector<DrawableObject*> *_objects){
-	
-	// Convert from object space to world space
-	vector<DrawableObject*> *objects = new vector<DrawableObject*>();
-
-	// View plane normal
+Point3D *Camera::getNewYAxis(){
 	Point3D *n = getViewPlaneNormal();
+	Point3D *u = getIntermediateOrthogonalAxis(n);
 
-	// Intermediate orthogonal axis
-	Point3D *up = new Point3D(0.0f, 0.1f, 0.0f);
-	Point3D *u = getIntermediateOrthogonalAxis(up, n);
-
-	// New y axis
-	Point3D *v = getNewYAxis(n, u);
-
-	// Clone objects and tranform to view space
-	for (int i = 0; i < _objects->size(); i++){
-		DrawableObject *clonedObj = _objects->at(i)->clone();
-
-		// Translate by the offset of the camera position
-		clonedObj->translate(handler, -position->getX(), -position->getY(), -position->getZ());
-
-		// Transform objects into view space
-		clonedObj->transformToViewSpace(handler, u, v, n);
-		//transformToViewSpace(clonedObj, u, v, n);
-
-		// Do Projection
-		float near = 1000.0f;
-		float far = 2000.0f;
-		float height = SCREEN_HEIGHT;
-		float width = SCREEN_WIDTH;
-
-		clonedObj->projectToNDC(handler, near, far, height, width);
-
-		objects->push_back(clonedObj);
-
-	}
-
-	// Clean up
-	if (n)
-		delete n;
-
-	if (up)
-		delete up;
-
-	if (u)
-		delete u;
-
-	if (v)
-		delete v;
-
-	// Return obejcts
-	return objects;
+	return new Point3D(	n->getY() * u->getZ() - n->getZ() * u->getY(),
+						n->getZ() * u->getX() - n->getX() * u->getZ(),
+						n->getX() * u->getY() - n->getY() * u->getX());
 }
 
 Camera::~Camera(void)
