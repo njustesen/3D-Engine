@@ -1,7 +1,7 @@
+#pragma once
 #include "SDL.h"
 #include <string>
 #include "SDL_image.h"
-#include "TransformHandler.h"
 #include <vector>
 #include "Triangle.h"
 using namespace std;

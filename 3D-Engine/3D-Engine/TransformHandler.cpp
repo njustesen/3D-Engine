@@ -1,6 +1,9 @@
 #include "TransformHandler.h"
-#include "DrawableObject.h"
+#include "Camera.h"
 #include <math.h>
+#include "main.h"
+
+#define PI 3.14159265
 
 TransformHandler::TransformHandler(void)
 {
@@ -53,9 +56,9 @@ void TransformHandler::rotateX(Point3D *_p, float _degrees){
 	delete result;
 }
 
-void TransformHandler::rotateX(DrawableObject *_obj, float _degrees){
+void TransformHandler::rotateObjectX(DrawableObject *_obj, float _degrees){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		rotateX(_obj->getTriangles()->at(t)->getA(), _degrees);
 		rotateX(_obj->getTriangles()->at(t)->getB(), _degrees);
 		rotateX(_obj->getTriangles()->at(t)->getC(), _degrees);
@@ -93,9 +96,9 @@ void TransformHandler::rotateY(Point3D *_p, float _degrees){
 	delete result;
 }
 
-void TransformHandler::rotateY(DrawableObject *_obj, float _degrees){
+void TransformHandler::rotateObjectY(DrawableObject *_obj, float _degrees){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		rotateY(_obj->getTriangles()->at(t)->getA(), _degrees);
 		rotateY(_obj->getTriangles()->at(t)->getB(), _degrees);
 		rotateY(_obj->getTriangles()->at(t)->getC(), _degrees);
@@ -133,9 +136,9 @@ void TransformHandler::rotateZ(Point3D *_p, float _degrees){
 	delete result;
 }
 
-void TransformHandler::rotateZ(DrawableObject *_obj, float _degrees){
+void TransformHandler::rotateObjectZ(DrawableObject *_obj, float _degrees){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		rotateZ(_obj->getTriangles()->at(t)->getA(), _degrees);
 		rotateZ(_obj->getTriangles()->at(t)->getB(), _degrees);
 		rotateZ(_obj->getTriangles()->at(t)->getC(), _degrees);
@@ -170,7 +173,17 @@ void TransformHandler::translate(Point3D *_p, float _offsetX, float _offsetY, fl
 	delete result;
 }
 
-void TransformHandler::translate(DrawableObject *_obj, float _offsetX, float _offsetY, float _offsetZ){
+void TransformHandler::translateObject(DrawableObject *_obj, float _offsetX, float _offsetY, float _offsetZ){
+
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
+		translate(_obj->getTriangles()->at(t)->getA(), _offsetX, _offsetY, _offsetZ);
+		translate(_obj->getTriangles()->at(t)->getB(), _offsetX, _offsetY, _offsetZ);
+		translate(_obj->getTriangles()->at(t)->getC(), _offsetX, _offsetY, _offsetZ);
+	}
+
+}
+
+void TransformHandler::translateObjectPosition(DrawableObject *_obj, float _offsetX, float _offsetY, float _offsetZ){
 
 	translate(_obj->getPosition(), _offsetX, _offsetY, _offsetZ);
 
@@ -203,9 +216,9 @@ void TransformHandler::scaleUniform(Point3D *_p, float _factor){
 	delete result;
 }
 
-void TransformHandler::scaleUniform(DrawableObject *_obj, float _factor){
+void TransformHandler::scaleObjectUniform(DrawableObject *_obj, float _factor){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		scaleUniform(_obj->getTriangles()->at(t)->getA(), _factor);
 		scaleUniform(_obj->getTriangles()->at(t)->getB(), _factor);
 		scaleUniform(_obj->getTriangles()->at(t)->getC(), _factor);
@@ -213,7 +226,7 @@ void TransformHandler::scaleUniform(DrawableObject *_obj, float _factor){
 
 }
 
-void TransformHandler::projectToNDC(Point3D *_p, float _near, float _far, float _height, float _width){
+void TransformHandler::toNDC(Point3D *_p, float _near, float _far, float _height, float _width){
 
 	float mat44[4][4] =
 		{
@@ -240,12 +253,18 @@ void TransformHandler::projectToNDC(Point3D *_p, float _near, float _far, float 
 	delete result;
 }
 
-void TransformHandler::projectToNDC(DrawableObject *_obj, float _near, float _far, float _height, float _width){
+void TransformHandler::objectToNDC(DrawableObject *_obj, Camera *camera){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
-		projectToNDC(_obj->getTriangles()->at(t)->getA(), _near, _far, _height, _width);
-		projectToNDC(_obj->getTriangles()->at(t)->getB(), _near, _far, _height, _width);
-		projectToNDC(_obj->getTriangles()->at(t)->getC(), _near, _far, _height, _width);
+	float near = camera->getNear();
+	float far = camera->getFar();
+	float angle = camera->getHorizontalViewAngle() * PI/180;
+	float width = (tan(angle / 2) * near) * 2;
+	float height = width / (SCREEN_WIDTH / SCREEN_WIDTH);
+
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
+		toNDC(_obj->getTriangles()->at(t)->getA(), near, far, height, width);
+		toNDC(_obj->getTriangles()->at(t)->getB(), near, far, height, width);
+		toNDC(_obj->getTriangles()->at(t)->getC(), near, far, height, width);
 	}
 
 }
@@ -277,14 +296,33 @@ void TransformHandler::toViewSpace(Point3D *_p, Point3D *_u, Point3D *_v, Point3
 	delete result;
 }
 
-void TransformHandler::toViewSpace(DrawableObject *_obj, Point3D *_u, Point3D *_v, Point3D *_n){
+void TransformHandler::objectToViewSpace(DrawableObject *_obj, Camera *camera){
 
-	for(int t = 0; t < _obj->getTriangles()->size(); t++){
-		toViewSpace(_obj->getTriangles()->at(t)->getA(), _u, _v, _n);
-		toViewSpace(_obj->getTriangles()->at(t)->getB(), _u, _v, _n);
-		toViewSpace(_obj->getTriangles()->at(t)->getC(), _u, _v, _n);
+	Point3D * u = camera->getUpVector();
+	Point3D * n = camera->getViewPlaneNormal();
+	Point3D * v = camera->getNewYAxis();
+
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
+		toViewSpace(_obj->getTriangles()->at(t)->getA(), u, v, n);
+		toViewSpace(_obj->getTriangles()->at(t)->getB(), u, v, n);
+		toViewSpace(_obj->getTriangles()->at(t)->getC(), u, v, n);
 	}
 
+}
+
+void TransformHandler::normalizeObject(DrawableObject *_obj){
+
+	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
+
+		float x = _obj->getTriangles()->at(t)->getA()->getX();
+		float y = _obj->getTriangles()->at(t)->getA()->getY();
+		float z = _obj->getTriangles()->at(t)->getA()->getZ();
+		float w = _obj->getTriangles()->at(t)->getA()->getW();
+
+		_obj->getTriangles()->at(t)->setA();
+
+
+	}
 }
 
 TransformHandler::~TransformHandler(void)

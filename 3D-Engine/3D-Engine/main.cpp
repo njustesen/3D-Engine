@@ -110,80 +110,80 @@ void init(){
 void update(int ticks){
 	if (inputHandler->right()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), 1.0f, 0.0f, 0.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), 1.0f, 0.0f, 0.0f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateY(objects->at(0), 1.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectY(objects->at(0), 1.0f);
 			}
 		}
 	}
 
 	if (inputHandler->left()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), -1.0f, 0.0f, 0.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), -1.0f, 0.0f, 0.0f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateY(objects->at(0), -0.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectY(objects->at(0), -0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->up()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), 0.0f, 1.0f, 0.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 1.0f, 0.0f);
 			}
 		} else if (inputHandler->shift()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->scaleUniform(objects->at(0), 1.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->scaleObjectUniform(objects->at(0), 1.1f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateX(objects->at(0), 0.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectX(objects->at(0), 0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->down()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), 0.0f, -1.0f, 0.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), 0.0f, -1.0f, 0.0f);
 			}
 		} else if (inputHandler->shift()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->scaleUniform(objects->at(0), 0.9f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->scaleObjectUniform(objects->at(0), 0.9f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateX(objects->at(0), -0.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectX(objects->at(0), -0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->w()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), 0.0f, 0.0f, 1.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 0.0f, 1.0f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateZ(objects->at(0), 0.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectZ(objects->at(0), 0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->s()){
 		if (inputHandler->control()){
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->translate(objects->at(0), 0.0f, 0.0f, -1.0f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 0.0f, -1.0f);
 			}
 		} else {
-			for (int i = 0; i < objects->size(); i++){
-				transformHandler->rotateZ(objects->at(0), -0.1f);
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectZ(objects->at(0), -0.1f);
 			}
 		}
 	}
@@ -210,7 +210,7 @@ void drawObject(DrawableObject *_object){
 	int x = int(_object->getPosition()->getX());
 	int y = int(_object->getPosition()->getY());
 
-	for (int i = 0; i < _object->getTriangles()->size(); i++){
+	for (unsigned int i = 0; i < _object->getTriangles()->size(); i++){
 		int x1 = int(_object->getTriangles()->at(i)->getA()->getX());
 		int y1 = int(_object->getTriangles()->at(i)->getA()->getY());
 		int z1 = int(_object->getTriangles()->at(i)->getA()->getZ());
@@ -226,11 +226,6 @@ void drawObject(DrawableObject *_object){
 	}
 }
 
-vector<DrawableObject*> *getTransformedObjects(){
-
-
-
-}
 
 void draw(){
 	//Update the screen
@@ -239,12 +234,35 @@ void draw(){
 
     }
 	SDL_FillRect(screen,NULL, 0x000000); 
-	vector<DrawableObject*> *objectsToDraw = getTransformedObjects();
 	
 	// Draw objects
-	for(int i = 0; i < objectsToDraw->size(); i++){
-		drawObject(objectsToDraw->at(i));
-		delete objectsToDraw->at(i);
+	for(unsigned int i = 0; i < objects->size(); i++){
+
+		DrawableObject *clone = objects->at(i)->clone();
+
+		// DER SKAL BRUGES (RETURNERES OG KALDES MED) MATRIX41 ISTEDET FOR OBJECTS!!
+
+		// cameraLocationTransform
+		transformHandler->translateObject(	clone, 
+											-camera->getPosition()->getX(), 
+											-camera->getPosition()->getY(), 
+											-camera->getPosition()->getZ());
+
+		// Camera Look Transform
+		transformHandler->objectToViewSpace(clone, camera);
+
+		// Perspective Transform
+		transformHandler->objectToNDC(clone, camera);
+
+		// Normalize
+		transformHandler->normalizeObject(clone);
+
+		// Now map into screen coordinates
+		//Point3D * screenCoordinate = new Point3D();
+		
+
+		drawObject(clone);
+		delete clone;
 	}
 
 	delete objectsToDraw;

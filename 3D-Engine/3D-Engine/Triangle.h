@@ -1,7 +1,8 @@
+#pragma once
 #include <vector>
 #include "Point3D.h"
 
-#pragma once
+
 class Triangle
 {
 private:

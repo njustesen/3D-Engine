@@ -1,6 +1,5 @@
 #include "DrawableObject.h"
 
-
 DrawableObject::DrawableObject(Point3D *_position, vector<Triangle*> *_triangles)
 {
 	triangles = _triangles;

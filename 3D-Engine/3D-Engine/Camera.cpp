@@ -9,6 +9,8 @@ Camera::Camera(Point3D *_position, Point3D *_lookingAt, TransformHandler *_handl
 	position = _position;
 	lookingAt = _lookingAt;
 	handler = _handler;
+	near = 30;
+	far = 2000;
 }
 
 Point3D *Camera::getPosition(){
@@ -31,6 +33,20 @@ void Camera::setPosition(Point3D *_Point3D){
 		delete position;
 
 	position = _Point3D;
+}
+
+float Camera::getFar(){
+	return far;
+}
+
+
+float Camera::getNear(){
+	return near;
+}
+
+
+float Camera::getHorizontalViewAngle(){
+	return horizonalViewAngle;
 }
 
 Point3D *Camera::getUpVector(){
@@ -59,13 +75,15 @@ Point3D *Camera::getViewPlaneNormal(){
 	return new Point3D(direction.getX() / length, direction.getY() / length, direction.getZ() / length);
 }
 
-Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
+Point3D *Camera::getIntermediateOrthogonalAxis(){
 
 	Point3D *up = getUpVector();
 
-	Point3D cross(up->getY() * _n->getZ() - up->getZ() * _n->getY(),
-				up->getZ() * _n->getX() - up->getX() * _n->getZ(),
-				up->getX() * _n->getY() - up->getY() * _n->getX());
+	Point3D *n = getViewPlaneNormal();
+
+	Point3D cross(up->getY() * n->getZ() - up->getZ() * n->getY(),
+				up->getZ() * n->getX() - up->getX() * n->getZ(),
+				up->getX() * n->getY() - up->getY() * n->getX());
 
 	float length = sqrt((cross.getX() * cross.getX()) +
 						(cross.getY() * cross.getY()) +
@@ -76,8 +94,10 @@ Point3D *Camera::getIntermediateOrthogonalAxis(Point3D *_up, Point3D *_n){
 }
 
 Point3D *Camera::getNewYAxis(){
+	
+	Point3D *u = getIntermediateOrthogonalAxis();
+
 	Point3D *n = getViewPlaneNormal();
-	Point3D *u = getIntermediateOrthogonalAxis(n);
 
 	return new Point3D(	n->getY() * u->getZ() - n->getZ() * u->getY(),
 						n->getZ() * u->getX() - n->getX() * u->getZ(),
