@@ -12,6 +12,8 @@ private:
 	bool shiftDown;
 	bool wDown;
 	bool sDown;
+	bool aDown;
+	bool dDown;
 	bool controlDown;
 public:
 	void handleKeyEvent(SDL_Event * sdlEvent);
@@ -21,6 +23,8 @@ public:
 	bool down();
 	bool w();
 	bool s();
+	bool a();
+	bool d();
 	bool space();
 	bool shift();
 	bool control();

@@ -25,6 +25,10 @@ TransformHandler * transformHandler;
 InputHandler * inputHandler;
 vector<DrawableObject*> * objects;
 Camera *camera;
+float moveSpeedX = 0.0f;
+float moveSpeedY = 0.0f;
+float moveSpeedZ = 0.0f;
+float acc = 5.0f;
 
 void init(){
 	//Initialize all SDL subsystems
@@ -47,7 +51,7 @@ void init(){
 	green = SDL_MapRGB(screen->format, 0,255,0);
 
 	// Create camera
-	camera = new Camera(new Point3D(300.0f, 600.0f, 900.0f), new Point3D(0.0f, 0.0f, 0.0f), 60.0f);
+	camera = new Camera(new Point3D(300.0f, 600.0f, 900.0f), new Point3D(0.0f, 600.0f, 2000.0f), 60.0f);
 
 	// Add objects - TODO: read from file
 	objects = new vector<DrawableObject*>();
@@ -98,95 +102,112 @@ void init(){
 	Point3D *b8 = new Point3D(0.0f, -100.0f, 0.0f);
 	Point3D *c8 = new Point3D(-100.0f, 0.0f, 0.0f);
 	Triangle *tri8 = new Triangle(a8,b8,c8);
-
+	
 	obj->addTriangle(tri5);
 	obj->addTriangle(tri6);
 	obj->addTriangle(tri7);
 	obj->addTriangle(tri8);
 
-	objects->push_back(obj);
+	for(int i = 0; i < 100; i++){
+		DrawableObject *obj2 = obj->clone();
+		obj2->setPosition(new Point3D((1000)*cosf(i), (1000)*sinf(i), i*-100) );
+		objects->push_back(obj2);
+	}
+	
 }
 
 void update(int ticks){
 	if (inputHandler->right()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), 1.0f, 0.0f, 0.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedX += acc;
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectY(objects->at(0), 0.1f);
+				transformHandler->rotateObjectY(objects->at(i), 0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->left()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), -1.0f, 0.0f, 0.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedX -= acc;
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectY(objects->at(0), -0.1f);
+				transformHandler->rotateObjectY(objects->at(i), -0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->up()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 1.0f, 0.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedY -= acc;
 		} else if (inputHandler->shift()){
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->scaleObjectUniform(objects->at(0), 1.1f);
+				transformHandler->scaleObjectUniform(objects->at(i), 1.1f);
 			}
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectX(objects->at(0), 0.1f);
+				transformHandler->rotateObjectX(objects->at(i), 0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->down()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), 0.0f, -1.0f, 0.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedY += acc;
 		} else if (inputHandler->shift()){
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->scaleObjectUniform(objects->at(0), 0.9f);
+				transformHandler->scaleObjectUniform(objects->at(i), 0.9f);
 			}
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectX(objects->at(0), -0.1f);
+				transformHandler->rotateObjectX(objects->at(i), -0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->w()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 0.0f, 1.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedZ -= acc;
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectZ(objects->at(0), 0.1f);
+				transformHandler->rotateObjectZ(objects->at(i), 0.1f);
 			}
 		}
 	}
 
 	if (inputHandler->s()){
-		if (inputHandler->control()){
-			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->translateObjectPosition(objects->at(0), 0.0f, 0.0f, -1.0f);
-			}
+		if (!inputHandler->control()){
+			moveSpeedZ += acc;
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectZ(objects->at(0), -0.1f);
+				transformHandler->rotateObjectZ(objects->at(i), -0.1f);
 			}
 		}
 	}
+
+	if (inputHandler->a()){
+		if (!inputHandler->control()){
+			moveSpeedX -= acc;
+		} else {
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectX(objects->at(i), 0.1f);
+			}
+		}
+	}
+
+	if (inputHandler->d()){
+		if (!inputHandler->control()){
+			moveSpeedX += acc;
+		} else {
+			for (unsigned int i = 0; i < objects->size(); i++){
+				transformHandler->rotateObjectX(objects->at(i), -0.1f);
+			}
+		}
+	}
+	
+	transformHandler->translate(camera->getPosition(), moveSpeedX, moveSpeedY, moveSpeedZ);
+	transformHandler->translate(camera->getLookingAt(), moveSpeedX, moveSpeedY, moveSpeedZ);
+	
 }
 
 void drawLine(int x1, int y1, int x2, int y2, int color){
@@ -206,7 +227,7 @@ void drawObject(DrawableObject *_object){
 		int y1 = int(_object->getTriangles()->at(i)->getA()->getY());
 		int x2 = int(_object->getTriangles()->at(i)->getB()->getX());
 		int y2 = int(_object->getTriangles()->at(i)->getB()->getY());
-		drawLine(x1, y1, x2, y2, green); 
+		drawLine(x1, y1, x2, y2, green);
 		int x3 = int(_object->getTriangles()->at(i)->getC()->getX());
 		int y3 = int(_object->getTriangles()->at(i)->getC()->getY());
 		drawLine(x2, y2, x3, y3, green); 
@@ -227,6 +248,7 @@ void draw(){
 	for(unsigned int i = 0; i < objects->size(); i++){
 		
 		DrawableObject *clone = objects->at(i)->clone();
+		
 		// From object to world coordinates
 		transformHandler->translateObject(clone, clone->getPosition()->getX(), clone->getPosition()->getY(), clone->getPosition()->getZ());
 		
@@ -238,6 +260,20 @@ void draw(){
 		
 		// Camera Look Transform
 		transformHandler->objectToViewSpace(clone, camera);
+		
+		bool discard = false;
+		for(unsigned int i = 0; i < clone->getTriangles()->size(); i++){
+			float za = clone->getTriangles()->at(i)->getA()->getZ();
+			float zb = clone->getTriangles()->at(i)->getB()->getZ();
+			float zc = clone->getTriangles()->at(i)->getC()->getZ();
+			if (za > -camera->getNear() || zb > -camera->getNear() || zc > -camera->getNear()){
+				discard = true;
+			}
+		}
+		if (discard){
+			delete clone;
+			continue;
+		}
 		
 		// Perspective Transform
 		transformHandler->objectToNDC(clone, camera);
@@ -258,10 +294,12 @@ void draw(){
 			y = clone->getTriangles()->at(t)->getC()->getY();
 			clone->getTriangles()->at(t)->getC()->setX( x * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
 			clone->getTriangles()->at(t)->getC()->setY( y * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
-		}
-				
+		}	
+		
 		drawObject(clone);
+		
 		delete clone;
+		
 	}
 	
 }
@@ -294,9 +332,9 @@ int main( int argc, char* args[] ){
 		int newTime = SDL_GetTicks();
 		int TimeSinceLastFrame = newTime - oldTime;
 		oldTime = newTime;
-
+		
 		update(TimeSinceLastFrame);
-
+		
 		// Draw
 		draw();
 

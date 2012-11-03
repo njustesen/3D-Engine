@@ -8,6 +8,8 @@ InputHandler::InputHandler(void)
 	downDown = false;
 	wDown = false;
 	sDown = false;
+	aDown = false;
+	dDown = false;
 	spaceDown = false;
 	shiftDown = false;
 	controlDown = false;
@@ -22,6 +24,8 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_DOWN : downDown = true; break;
 			case SDLK_w : wDown = true; break;
 			case SDLK_s : sDown = true; break;
+			case SDLK_a : aDown = true; break;
+			case SDLK_d : dDown = true; break;
 			case SDLK_SPACE : spaceDown = true; break;
 			case SDLK_LSHIFT : shiftDown = true; break;
 			case SDLK_LCTRL : controlDown = true; break;
@@ -34,6 +38,8 @@ void InputHandler::handleKeyEvent(SDL_Event * sdlEvent){
 			case SDLK_DOWN : downDown = false; break;
 			case SDLK_w : wDown = false; break;
 			case SDLK_s : sDown = false; break;
+			case SDLK_a : aDown = false; break;
+			case SDLK_d : dDown = false; break;
 			case SDLK_LSHIFT : shiftDown = false; break;
 			case SDLK_LCTRL : controlDown = false; break;
 		}
@@ -62,6 +68,14 @@ bool InputHandler::w(){
 
 bool InputHandler::s(){
 	return sDown;
+}
+
+bool InputHandler::a(){
+	return aDown;
+}
+
+bool InputHandler::d(){
+	return dDown;
 }
 
 bool InputHandler::space(){

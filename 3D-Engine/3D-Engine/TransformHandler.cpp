@@ -47,13 +47,17 @@ void TransformHandler::rotateX(Point3D *_p, float _degrees){
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::rotateObjectX(DrawableObject *_obj, float _degrees){
@@ -87,13 +91,17 @@ void TransformHandler::rotateY(Point3D *_p, float _degrees){
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::rotateObjectY(DrawableObject *_obj, float _degrees){
@@ -127,13 +135,17 @@ void TransformHandler::rotateZ(Point3D *_p, float _degrees){
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::rotateObjectZ(DrawableObject *_obj, float _degrees){
@@ -163,14 +175,19 @@ void TransformHandler::translate(Point3D *_p, float _offsetX, float _offsetY, fl
 		{ _p->getZ() },
 		{ 1.0f },
 		};
-
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
+	
 }
 
 void TransformHandler::translateObject(DrawableObject *_obj, float _offsetX, float _offsetY, float _offsetZ){
@@ -207,13 +224,17 @@ void TransformHandler::scaleUniform(Point3D *_p, float _factor){
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::scaleObjectUniform(DrawableObject *_obj, float _factor){
@@ -244,7 +265,9 @@ void TransformHandler::toNDC(Point3D *_p, float _near, float _far, float _height
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	// Make sure to normalize with w
 	_p->setX(result->getValue(0) / result->getValue(3));
@@ -252,6 +275,8 @@ void TransformHandler::toNDC(Point3D *_p, float _near, float _far, float _height
 	_p->setZ(result->getValue(2) / result->getValue(3));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::objectToNDC(DrawableObject *_obj, Camera *camera){
@@ -288,13 +313,17 @@ void TransformHandler::toViewSpace(Point3D *_p, Point3D *_u, Point3D *_v, Point3
 		{ 1.0f },
 		};
 
-	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
+	Matrix41 * m41 = new Matrix41(mat41);
+	Matrix44 * m44 = new Matrix44(mat44);
+	Matrix41 * result = multiplyMatrices(m44, m41);
 
 	_p->setX(result->getValue(0));
 	_p->setY(result->getValue(1));
 	_p->setZ(result->getValue(2));
 
 	delete result;
+	delete m41;
+	delete m44;
 }
 
 void TransformHandler::objectToViewSpace(DrawableObject *_obj, Camera *camera){
@@ -308,6 +337,10 @@ void TransformHandler::objectToViewSpace(DrawableObject *_obj, Camera *camera){
 		toViewSpace(_obj->getTriangles()->at(t)->getB(), u, v, n);
 		toViewSpace(_obj->getTriangles()->at(t)->getC(), u, v, n);
 	}
+
+	delete u;
+	delete v;
+	delete n;
 
 }
 

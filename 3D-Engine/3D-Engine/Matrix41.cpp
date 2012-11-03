@@ -17,6 +17,6 @@ void Matrix41::setValue(int row, float val){
 }
 
 
-Matrix41::~Matrix41(void)
-{
+Matrix41::~Matrix41(void){
+
 }

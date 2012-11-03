@@ -9,7 +9,7 @@ Camera::Camera(Point3D *_position, Point3D *_lookingAt, float _horizonalViewAngl
 	position = _position;
 	lookingAt = _lookingAt;
 	horizonalViewAngle = _horizonalViewAngle;
-	near = 30;
+	near = 10;
 	far = 2000;
 }
 
@@ -52,15 +52,6 @@ float Camera::getHorizontalViewAngle(){
 Point3D *Camera::getUpVector(){
 
 	return new Point3D(0.0f, 1.0f, 0.0f);
-	/*
-	Point3D right(lookingAt->getY() * v.getZ() - lookingAt->getZ() * v.getY(),
-				lookingAt->getZ() * v.getX() - lookingAt->getX() * v.getZ(),
-				lookingAt->getX() * v.getY() - lookingAt->getY() * v.getX());
-
-	return new Point3D(	right.getY() * lookingAt->getZ() - right.getZ() * lookingAt->getY(),
-						right.getZ() * lookingAt->getX() - right.getX() * lookingAt->getZ(),
-						right.getX() * lookingAt->getY() - right.getY() * lookingAt->getX());
-						*/
 
 }
 
@@ -90,6 +81,9 @@ Point3D *Camera::getIntermediateOrthogonalAxis(){
 						(cross.getY() * cross.getY()) +
 						(cross.getZ() * cross.getZ()));
 
+	delete up;
+	delete n;
+
 	return new Point3D(cross.getX() / length, cross.getY() / length, cross.getZ() / length);
 
 }
@@ -100,9 +94,14 @@ Point3D *Camera::getNewYAxis(){
 
 	Point3D *u = getIntermediateOrthogonalAxis();
 
-	return new Point3D(	n->getY() * u->getZ() - n->getZ() * u->getY(),
-						n->getZ() * u->getX() - n->getX() * u->getZ(),
-						n->getX() * u->getY() - n->getY() * u->getX());
+	float x = n->getY() * u->getZ() - n->getZ() * u->getY();
+	float y = n->getZ() * u->getX() - n->getX() * u->getZ();
+	float z = n->getX() * u->getY() - n->getY() * u->getX();
+
+	delete n;
+	delete u;
+
+	return new Point3D(	x, y, z );
 }
 
 Camera::~Camera(void)

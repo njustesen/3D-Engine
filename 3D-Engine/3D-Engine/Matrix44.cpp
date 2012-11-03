@@ -18,6 +18,6 @@ void Matrix44::setValue(int row, int col, float val){
 	matrixArray[row][col] = val;
 }
 
-Matrix44::~Matrix44(void)
-{
+Matrix44::~Matrix44(void){
+
 }
