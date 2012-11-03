@@ -1,5 +1,6 @@
 #pragma once
 #include "Point3D.h"
+#include "Camera.h"
 #include "DrawableObject.h"
 #include "Matrix41.h"
 #include "Matrix44.h"
@@ -26,7 +27,6 @@ public:
 	void objectToNDC(DrawableObject *_obj, Camera *camera);
 	void toViewSpace(Point3D *_p, Point3D *_u, Point3D *_v, Point3D *_n);
 	void objectToViewSpace(DrawableObject *_obj, Camera *camera);
-	void normalizeObject(DrawableObject *_obj);
 	~TransformHandler(void);
 };
 

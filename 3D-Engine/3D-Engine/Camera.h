@@ -3,14 +3,12 @@
 #include "SDL.h"
 #include <vector>
 #include "DrawableObject.h"
-#include "TransformHandler.h"
 
 class Camera
 {
 private:
 	Point3D *position;
 	Point3D *lookingAt;
-	TransformHandler *handler;
 	float far;
 	float near;
 	float horizonalViewAngle;
@@ -26,7 +24,7 @@ public:
 	float getFar();
 	float getNear();
 	float getHorizontalViewAngle();
-	Camera(Point3D *_position, Point3D *_lookingAt, TransformHandler *_handler);
+	Camera(Point3D *_position, Point3D *_lookingAt, float _horizonalViewAngle);
 	~Camera(void);
 };
 

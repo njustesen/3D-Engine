@@ -246,9 +246,10 @@ void TransformHandler::toNDC(Point3D *_p, float _near, float _far, float _height
 
 	Matrix41 * result = multiplyMatrices(new Matrix44(mat44), new Matrix41(mat41));
 
-	_p->setX(result->getValue(0));
-	_p->setY(result->getValue(1));
-	_p->setZ(result->getValue(2));
+	// Make sure to normalize with w
+	_p->setX(result->getValue(0) / result->getValue(3));
+	_p->setY(result->getValue(1) / result->getValue(3));
+	_p->setZ(result->getValue(2) / result->getValue(3));
 
 	delete result;
 }
@@ -259,7 +260,7 @@ void TransformHandler::objectToNDC(DrawableObject *_obj, Camera *camera){
 	float far = camera->getFar();
 	float angle = camera->getHorizontalViewAngle() * PI/180;
 	float width = (tan(angle / 2) * near) * 2;
-	float height = width / (SCREEN_WIDTH / SCREEN_WIDTH);
+	float height = width / (SCREEN_WIDTH / SCREEN_HEIGHT);
 
 	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		toNDC(_obj->getTriangles()->at(t)->getA(), near, far, height, width);
@@ -298,9 +299,9 @@ void TransformHandler::toViewSpace(Point3D *_p, Point3D *_u, Point3D *_v, Point3
 
 void TransformHandler::objectToViewSpace(DrawableObject *_obj, Camera *camera){
 
-	Point3D * u = camera->getUpVector();
-	Point3D * n = camera->getViewPlaneNormal();
-	Point3D * v = camera->getNewYAxis();
+	Point3D * u = camera->getIntermediateOrthogonalAxis();	// New X
+	Point3D * v = camera->getNewYAxis();					// New Y
+	Point3D * n = camera->getViewPlaneNormal();				// New Z
 
 	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
 		toViewSpace(_obj->getTriangles()->at(t)->getA(), u, v, n);
@@ -308,21 +309,6 @@ void TransformHandler::objectToViewSpace(DrawableObject *_obj, Camera *camera){
 		toViewSpace(_obj->getTriangles()->at(t)->getC(), u, v, n);
 	}
 
-}
-
-void TransformHandler::normalizeObject(DrawableObject *_obj){
-
-	for(unsigned int t = 0; t < _obj->getTriangles()->size(); t++){
-
-		float x = _obj->getTriangles()->at(t)->getA()->getX();
-		float y = _obj->getTriangles()->at(t)->getA()->getY();
-		float z = _obj->getTriangles()->at(t)->getA()->getZ();
-		float w = _obj->getTriangles()->at(t)->getA()->getW();
-
-		_obj->getTriangles()->at(t)->setA();
-
-
-	}
 }
 
 TransformHandler::~TransformHandler(void)

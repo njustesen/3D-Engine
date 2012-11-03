@@ -47,7 +47,7 @@ void init(){
 	green = SDL_MapRGB(screen->format, 0,255,0);
 
 	// Create camera
-	camera = new Camera(new Point3D(3000.0f, 3000.0f, 3000.0f), new Point3D(0.0f, 0.0f, 0.0f), transformHandler);
+	camera = new Camera(new Point3D(300.0f, 600.0f, 900.0f), new Point3D(0.0f, 0.0f, 0.0f), 60.0f);
 
 	// Add objects - TODO: read from file
 	objects = new vector<DrawableObject*>();
@@ -115,7 +115,7 @@ void update(int ticks){
 			}
 		} else {
 			for (unsigned int i = 0; i < objects->size(); i++){
-				transformHandler->rotateObjectY(objects->at(0), 1.0f);
+				transformHandler->rotateObjectY(objects->at(0), 0.1f);
 			}
 		}
 	}
@@ -191,11 +191,6 @@ void update(int ticks){
 
 void drawLine(int x1, int y1, int x2, int y2, int color){
 
-	x1 += SCREEN_WIDTH/2;
-	x2 += SCREEN_WIDTH/2;
-	y1 += SCREEN_HEIGHT/2;
-	y2 += SCREEN_HEIGHT/2;
-
 	// Only draw inside screen
 	if (x1 >= 0 && x2 >= 0 && y1 >= 0 && y2 >= 0){
 		if (x2 < SCREEN_WIDTH && x2 < SCREEN_WIDTH && y1 < SCREEN_HEIGHT && y2 < SCREEN_HEIGHT){
@@ -206,21 +201,14 @@ void drawLine(int x1, int y1, int x2, int y2, int color){
 
 void drawObject(DrawableObject *_object){
 
-	// Draw all triangles
-	int x = int(_object->getPosition()->getX());
-	int y = int(_object->getPosition()->getY());
-
 	for (unsigned int i = 0; i < _object->getTriangles()->size(); i++){
 		int x1 = int(_object->getTriangles()->at(i)->getA()->getX());
 		int y1 = int(_object->getTriangles()->at(i)->getA()->getY());
-		int z1 = int(_object->getTriangles()->at(i)->getA()->getZ());
 		int x2 = int(_object->getTriangles()->at(i)->getB()->getX());
 		int y2 = int(_object->getTriangles()->at(i)->getB()->getY());
-		int z2 = int(_object->getTriangles()->at(i)->getB()->getZ());
 		drawLine(x1, y1, x2, y2, green); 
 		int x3 = int(_object->getTriangles()->at(i)->getC()->getX());
 		int y3 = int(_object->getTriangles()->at(i)->getC()->getY());
-		int z3 = int(_object->getTriangles()->at(i)->getC()->getZ());
 		drawLine(x2, y2, x3, y3, green); 
 		drawLine(x3, y3, x1, y1, green); 
 	}
@@ -237,36 +225,45 @@ void draw(){
 	
 	// Draw objects
 	for(unsigned int i = 0; i < objects->size(); i++){
-
+		
 		DrawableObject *clone = objects->at(i)->clone();
-
-		// DER SKAL BRUGES (RETURNERES OG KALDES MED) MATRIX41 ISTEDET FOR OBJECTS!!
-
-		// cameraLocationTransform
+		// From object to world coordinates
+		transformHandler->translateObject(clone, clone->getPosition()->getX(), clone->getPosition()->getY(), clone->getPosition()->getZ());
+		
+		// Camera Location Transform
 		transformHandler->translateObject(	clone, 
 											-camera->getPosition()->getX(), 
 											-camera->getPosition()->getY(), 
 											-camera->getPosition()->getZ());
-
+		
 		// Camera Look Transform
 		transformHandler->objectToViewSpace(clone, camera);
-
+		
 		// Perspective Transform
 		transformHandler->objectToNDC(clone, camera);
-
-		// Normalize
-		transformHandler->normalizeObject(clone);
-
-		// Now map into screen coordinates
-		//Point3D * screenCoordinate = new Point3D();
 		
+		// Now map into screen coordinates
+		for(unsigned int t = 0; t < clone->getTriangles()->size(); t++){
+			float x = clone->getTriangles()->at(t)->getA()->getX();
+			float y = clone->getTriangles()->at(t)->getA()->getY();
+			clone->getTriangles()->at(t)->getA()->setX( x * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
+			clone->getTriangles()->at(t)->getA()->setY( y * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
 
+			x = clone->getTriangles()->at(t)->getB()->getX();
+			y = clone->getTriangles()->at(t)->getB()->getY();
+			clone->getTriangles()->at(t)->getB()->setX( x * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
+			clone->getTriangles()->at(t)->getB()->setY( y * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
+
+			x = clone->getTriangles()->at(t)->getC()->getX();
+			y = clone->getTriangles()->at(t)->getC()->getY();
+			clone->getTriangles()->at(t)->getC()->setX( x * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
+			clone->getTriangles()->at(t)->getC()->setY( y * (SCREEN_WIDTH/2.0) + (SCREEN_WIDTH/2.0));
+		}
+				
 		drawObject(clone);
 		delete clone;
 	}
-
-	delete objectsToDraw;
-
+	
 }
 
 int main( int argc, char* args[] ){
